@@ -1,0 +1,243 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Sidekicks — Where kids learn to earn.</title>
+<meta name="description" content="Sidekicks is a parent-supervised marketplace where kids learn to earn through real-world buying and selling.">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+:root{font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;color:#182238;--purple:#6d4aff;--purple2:#8b6cff;--teal:#13b8b0;--sky:#65c7ff;--yellow:#ffd85a;--coral:#ff7f6e;--green:#49c878;--bg:#f6f8ff;--card:#fff;--muted:#667085;--line:#e5e9f2;--shadow:0 16px 45px rgba(50,55,100,.10)}
+*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:linear-gradient(180deg,#f7f8ff 0%,#fff 42%,#f4fbff 100%);color:var(--ink)}
+header{position:sticky;top:0;z-index:10;background:rgba(255,255,255,.94);backdrop-filter:blur(14px);border-bottom:1px solid var(--line);padding:14px clamp(16px,6vw,80px);display:flex;align-items:center;gap:16px;flex-wrap:wrap}
+.brand{display:flex;align-items:center;gap:10px;font-weight:900;font-size:25px;color:var(--purple);text-decoration:none}.logo{width:42px;height:42px;border-radius:14px;background:linear-gradient(135deg,var(--purple),var(--teal));display:grid;place-items:center;color:#fff;box-shadow:0 8px 20px #6d4aff35}
+nav{display:flex;gap:6px;flex-wrap:wrap;margin-left:auto}nav button,.linkbtn{border:0;background:transparent;color:#465066;font-weight:800;padding:10px 12px;border-radius:10px;cursor:pointer}nav button:hover,.linkbtn:hover{background:#f0efff;color:var(--purple)}
+.primary,.cta{background:linear-gradient(135deg,var(--purple),var(--purple2));color:#fff;border:0;padding:13px 18px;border-radius:13px;font-weight:900;cursor:pointer;box-shadow:0 8px 20px #6d4aff2b}.secondary{background:#fff;color:#33405a;border:1px solid var(--line);padding:12px 16px;border-radius:13px;font-weight:800;cursor:pointer}.teal{background:var(--teal);color:#fff;border:0;padding:12px 16px;border-radius:13px;font-weight:900;cursor:pointer}
+.hero{padding:70px clamp(20px,8vw,110px) 50px;display:grid;grid-template-columns:1.18fr .82fr;gap:35px;align-items:center}.eyebrow{display:inline-flex;align-items:center;gap:7px;background:#fff7cf;color:#695300;border:1px solid #f2dc78;padding:7px 11px;border-radius:999px;font-weight:900}.hero h1{font-size:clamp(44px,6vw,74px);line-height:1.02;margin:18px 0 18px;letter-spacing:-2px}.hero h1 span{color:var(--purple)}.hero p{font-size:19px;line-height:1.65;color:var(--muted);max-width:720px}.heroActions{display:flex;gap:10px;flex-wrap:wrap;margin-top:25px}.heroCard{position:relative;overflow:hidden;background:#fff;border:1px solid var(--line);border-radius:28px;padding:30px;box-shadow:var(--shadow)}.heroCard:before{content:"";position:absolute;width:170px;height:170px;background:#65c7ff33;border-radius:50%;right:-60px;top:-60px}.heroCard:after{content:"";position:absolute;width:110px;height:110px;background:#ffd85a44;border-radius:50%;left:-45px;bottom:-35px}.heroCard>*{position:relative}.badgeRow{display:flex;gap:8px;flex-wrap:wrap}.badge{padding:7px 10px;border-radius:999px;font-size:13px;font-weight:900}.b1{background:#eee9ff;color:#5a3ee8}.b2{background:#ddfaf7;color:#087f79}.b3{background:#fff0ed;color:#bd4d40}
+.section{padding:44px clamp(20px,8vw,110px)}.sectionHead{display:flex;justify-content:space-between;gap:18px;align-items:end;flex-wrap:wrap}.sectionHead h2{font-size:34px;margin:0 0 8px}.muted{color:var(--muted)}.search{min-width:280px;padding:12px 14px;border:1px solid var(--line);border-radius:13px;font:inherit;background:#fff}.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-top:22px}.item,.card{background:#fff;border:1px solid var(--line);border-radius:20px;padding:21px;box-shadow:0 9px 28px rgba(50,55,100,.07)}.item{transition:transform .18s ease,box-shadow .18s ease}.item:hover{transform:translateY(-3px);box-shadow:var(--shadow)}.emoji{font-size:43px}.item h3{margin:8px 0 6px}.price{font-size:22px;font-weight:950;color:var(--purple)}.interest{margin-top:13px;background:#e9fbf9;color:#087f79;border:0;border-radius:11px;padding:10px 14px;font-weight:900;cursor:pointer}
+.steps{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;padding:5px clamp(20px,8vw,110px) 55px}.stepIcon{font-size:28px}.step1{border-top:5px solid var(--purple)}.step2{border-top:5px solid var(--teal)}.step3{border-top:5px solid var(--yellow)}
+.hub{padding:44px clamp(20px,8vw,110px)}.tabs{display:flex;gap:8px;flex-wrap:wrap;margin:20px 0}.tabs button{border:1px solid var(--line);background:#fff;border-radius:11px;padding:10px 14px;cursor:pointer;font-weight:850}.tabs button.active{background:#eee9ff;color:#5a3ee8;border-color:#d7ccff}.panel{display:none}.panel.on{display:block}.form{display:grid;gap:13px;max-width:650px}.form label{display:grid;gap:7px;font-weight:800}.form input,.form textarea,.form select{padding:12px 13px;border:1px solid var(--line);border-radius:11px;font:inherit;background:#fff}.notice{padding:14px;border-radius:14px;background:#fff9e4;border:1px solid #f0db82}.success{padding:12px 14px;border-radius:12px;background:#eafaf0;border:1px solid #bce7ca;color:#1e7740}.danger{padding:12px 14px;border-radius:12px;background:#fff0ee;border:1px solid #ffc6bf;color:#9d3f35}.status{padding:8px 11px;border-radius:999px;background:#eef2ff;color:#5141b7;display:inline-block;font-weight:850;font-size:13px}.row{display:flex;gap:12px;align-items:center;justify-content:space-between;flex-wrap:wrap}.authGrid{display:grid;grid-template-columns:1fr 1fr;gap:18px}.legal{padding:50px clamp(20px,8vw,110px);background:#fff;border-top:1px solid var(--line)}.legal button{border:1px solid var(--line);background:#fff;border-radius:10px;padding:10px 13px;margin:5px;cursor:pointer;font-weight:800}.modal{display:none;position:fixed;inset:0;background:#10162bcc;align-items:center;justify-content:center;padding:18px;z-index:30}.modal.on{display:flex}.modal .card{max-width:820px;width:100%;max-height:88vh;overflow:auto}.close{float:right;border:0;background:none;font-size:27px;cursor:pointer}.footer{padding:35px clamp(20px,8vw,110px);background:#1e2440;color:#e9ecf7}.footer a{color:#fff}.small{font-size:13px}.hidden{display:none!important}.config{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:12px;background:#f7f8fc;padding:10px;border-radius:9px;overflow:auto}
+@media(max-width:850px){.hero,.grid,.steps,.authGrid{grid-template-columns:1fr}nav{order:3;width:100%;margin-left:0;overflow:auto}.hero{padding-top:45px}.hero h1{letter-spacing:-1px}}
+</style>
+</head>
+<body>
+<header>
+<a class="brand" href="#" onclick="go('top');return false"><span class="logo">★</span>Sidekicks</a>
+<nav>
+<button onclick="go('market')">Marketplace</button><button onclick="go('sell')">Sell</button><button onclick="go('hub')">Parent Hub</button><button onclick="openDoc('safety')">Safety</button><button onclick="openDoc('privacy')">Privacy</button>
+</nav>
+<button class="secondary" id="authBtn" onclick="go('account')">Account</button>
+</header>
+<main id="top">
+<section class="hero">
+<div>
+<span class="eyebrow">🌟 Learn by doing</span>
+<h1>Sidekicks — <span>Where kids learn to earn.</span></h1>
+<p>A real family marketplace where kids can help create listings and discover items while learning practical skills like selling, pricing and money management. Parents stay in control of approvals, payments, communication or pickup/delivery.</p>
+<div class="heroActions"><button class="cta" onclick="go('market')">Explore the Marketplace →</button><button class="secondary" onclick="go('sell')">List an Item</button></div>
+</div>
+<div class="heroCard">
+<h2>🌈 Learn by doing</h2>
+<p>Sidekicks gives kids a safe, parent-led way to practice entrepreneurship, sales, pricing and money management through real-world marketplace experiences.</p>
+<div class="badgeRow"><span class="badge b1">Parent approved</span><span class="badge b2">Private by design</span><span class="badge b3">No child meetups</span></div>
+<hr style="border:0;border-top:1px solid var(--line);margin:22px 0">
+<p><b>Standard:</b> 10% seller fee</p><p><b>Premium:</b> $4.99/month · 0% seller fee</p>
+<span class="status" id="accountStatus">Connecting…</span>
+</div>
+</section>
+
+<section id="market" class="section">
+<div class="sectionHead"><div><h2>Marketplace</h2><p class="muted">Browse approved family listings. Private child information stays out of public listings.</p></div><input id="search" class="search" placeholder="Search toys, books, sports gear…" oninput="renderMarket()"></div>
+<div id="items" class="grid"></div>
+</section>
+
+<section class="steps">
+<div class="card step1"><div class="stepIcon">🧒</div><h3>1. Kids participate</h3><p>Kids can help draft listings and explore items while keeping private contact information protected.</p></div>
+<div class="card step2"><div class="stepIcon">👨‍👩‍👧</div><h3>2. Parents approve</h3><p>Parent approval sits between a child’s marketplace activity and real transactions.</p></div>
+<div class="card step3"><div class="stepIcon">💳</div><h3>3. Parents transact</h3><p>Parents handle payment and parent-to-parent pickup or delivery.</p></div>
+</section>
+
+<section id="sell" class="hub">
+<h2>Sell an Item</h2>
+<div class="card">
+<form class="form" onsubmit="createListing(event)">
+<label>Item name<input id="lname" required placeholder="e.g. LEGO set"></label>
+<label>Description<textarea id="ldesc" required rows="3" placeholder="Condition and what is included"></textarea></label>
+<label>Price (CAD)<input id="lprice" required type="number" min="1" step=".01"></label>
+<label>Category<select id="lcat"><option>Toys</option><option>Books</option><option>Sports</option><option>Clothing</option><option>Games</option><option>Other</option></select></label>
+<button class="primary">Submit for Parent Approval</button>
+</form>
+<p class="notice">Listings are stored in Supabase and remain private until the parent-approval workflow publishes them. The secure approval authority is server-side.</p>
+<div id="sellMessage"></div>
+</div>
+</section>
+
+<section id="hub" class="hub">
+<h2>Parent Hub</h2>
+<div class="tabs" id="tabs">
+<button class="active" onclick="tab('approvals',this)">Approvals</button><button onclick="tab('interests',this)">Interest Requests</button><button onclick="tab('orders',this)">Orders</button><button onclick="tab('premium',this)">Premium</button><button onclick="tab('profile',this)">Family Account</button><button onclick="tab('backend',this)">Backend & Stripe</button><button onclick="tab('notifications',this)">Notifications</button><button onclick="tab('safety',this)">Safety Reports</button>
+</div>
+<div id="approvals" class="panel on card"></div><div id="interests" class="panel card"></div><div id="orders" class="panel card"></div><div id="premium" class="panel card"></div>
+<div id="profile" class="panel card"><h3>Parent account</h3><p class="muted">Your parent profile is stored in Supabase. Child-parent linking and consent verification are enforced by the backend workflow.</p><form class="form" onsubmit="saveParent(event)"><label>Parent/guardian name<input id="pname" required></label><label>Parent email<input id="pemail" type="email" required></label><button class="primary">Save Parent Profile</button></form><div id="profileMessage"></div></div>
+<div id="backend" class="panel card"></div><div id="notifications" class="panel card"></div><div id="safety" class="panel card"></div>
+</section>
+
+<section id="account" class="hub">
+<h2>Account</h2><div class="authGrid">
+<div class="card"><h3>Sign in</h3><form class="form" onsubmit="signIn(event)"><label>Email<input id="loginEmail" type="email" required></label><label>Password<input id="loginPassword" type="password" minlength="6" required></label><button class="primary">Sign In</button></form><div id="loginMessage"></div></div>
+<div class="card"><h3>Create parent account</h3><form class="form" onsubmit="signUp(event)"><label>Parent/guardian name<input id="signupName" required></label><label>Email<input id="signupEmail" type="email" required></label><label>Password<input id="signupPassword" type="password" minlength="6" required></label><label><input id="signupConsent" type="checkbox" required> I am the parent/guardian and agree to the Sidekicks terms and privacy policy.</label><button class="primary">Create Account</button></form><div id="signupMessage"></div></div>
+</div>
+<div class="card" style="margin-top:18px"><div class="row"><div><h3>Current session</h3><p id="accountBox">Not signed in.</p></div><button class="secondary" id="signOutBtn" onclick="signOut()" style="display:none">Sign Out</button></div></div>
+</section>
+
+<section class="legal">
+<h2>Built around family safety</h2><p>Sidekicks is parent-led: no child-to-adult meetups, no public child addresses or phone numbers, and no child-controlled payment or payout.</p>
+<button onclick="openDoc('privacy')">Privacy Policy</button><button onclick="openDoc('terms')">Terms</button><button onclick="openDoc('safety')">Safety Rules</button><button onclick="openDoc('fees')">Fees & Refunds</button>
+</section>
+</main>
+
+<div id="modal" class="modal"><div class="card"><button class="close" onclick="hide()">×</button><div id="content"></div></div></div>
+<footer class="footer"><b>Sidekicks — Where kids learn to earn.</b><p class="small">Parent-supervised marketplace for learning real-world buying and selling skills.</p></footer>
+
+<script>
+const SUPABASE_URL='https://vdhfjpflwrvocsilqhlp.supabase.co';
+const SUPABASE_PUBLISHABLE_KEY='PASTE_YOUR_SUPABASE_PUBLISHABLE_KEY_HERE';
+const FUNCTIONS_BASE=SUPABASE_URL+'/functions/v1';
+const {createClient}=supabase;
+const sb=createClient(SUPABASE_URL,SUPABASE_PUBLISHABLE_KEY,{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true}});
+let currentUser=null,currentProfile=null,listings=[],premium=false;
+
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const money=cents=>'$'+(Number(cents||0)/100).toFixed(2)+' CAD';
+const msg=(id,text,type='success')=>{const e=document.getElementById(id);if(e)e.innerHTML=text?'<div class="'+type+'">'+esc(text)+'</div>':''};
+
+function configured(){return SUPABASE_PUBLISHABLE_KEY && !SUPABASE_PUBLISHABLE_KEY.includes('PASTE_YOUR');}
+function go(id){document.getElementById(id)?.scrollIntoView({behavior:'smooth'});renderAll()}
+function tab(id,button){document.querySelectorAll('.panel').forEach(x=>x.classList.remove('on'));document.getElementById(id)?.classList.add('on');document.querySelectorAll('#tabs button').forEach(x=>x.classList.remove('active'));button?.classList.add('active');renderAll()}
+
+async function signUp(e){
+ e.preventDefault();
+ if(!configured()){msg('signupMessage','Add the Supabase publishable/anon key at the top of index.html first.','danger');return}
+ const name=document.getElementById('signupName').value.trim(),email=document.getElementById('signupEmail').value.trim(),password=document.getElementById('signupPassword').value;
+ const {data,error}=await sb.auth.signUp({email,password,options:{data:{display_name:name,role:'parent'}}});
+ if(error){msg('signupMessage',error.message,'danger');return}
+ if(data.user) await ensureProfile(data.user,name,email);
+ msg('signupMessage',data.session?'Account created and signed in.':'Account created. Check your email if email confirmation is enabled.');await refresh()
+}
+async function signIn(e){
+ e.preventDefault();
+ if(!configured()){msg('loginMessage','Add the Supabase publishable/anon key at the top of index.html first.','danger');return}
+ const {error}=await sb.auth.signInWithPassword({email:document.getElementById('loginEmail').value.trim(),password:document.getElementById('loginPassword').value});
+ msg('loginMessage',error?error.message:'Signed in successfully.',error?'danger':'success');if(!error)await refresh()
+}
+async function signOut(){await sb.auth.signOut();currentUser=null;currentProfile=null;premium=false;listings=[];renderAll()}
+async function ensureProfile(user,name,email){
+ const display=name||user.user_metadata?.display_name||user.email?.split('@')[0]||'Parent';
+ const {data,error}=await sb.from('profiles').upsert({id:user.id,role:'parent',display_name:display,email:email||user.email},{onConflict:'id'}).select().single();
+ if(!error)currentProfile=data;
+}
+async function refresh(){
+ if(!configured()){currentUser=null;renderAll();return}
+ const {data}=await sb.auth.getUser();currentUser=data?.user||null;
+ if(currentUser){
+   const {data:p}=await sb.from('profiles').select('*').eq('id',currentUser.id).maybeSingle();
+   currentProfile=p||null;if(!p)await ensureProfile(currentUser,currentUser.user_metadata?.display_name,currentUser.email);
+ }
+ await loadListings();await loadPremium();renderAll()
+}
+async function loadListings(){
+ if(!configured()){listings=[];return}
+ const {data,error}=await sb.from('listings').select('id,title,description,category,price_cents,status,seller_child_id,created_at').eq('status','published').order('created_at',{ascending:false});
+ listings=error?[]:(data||[])
+}
+async function loadPremium(){
+ premium=false;if(!currentUser||!configured())return;
+ const {data}=await sb.from('premium_subscriptions').select('status,current_period_end').eq('profile_id',currentUser.id).maybeSingle();
+ premium=!!data&&['active','trialing'].includes(data.status)
+}
+function renderMarket(){
+ const q=(document.getElementById('search')?.value||'').toLowerCase();
+ const rows=listings.filter(x=>(x.title+x.description+x.category).toLowerCase().includes(q));
+ document.getElementById('items').innerHTML=rows.map(x=>'<article class="item"><div class="emoji">'+({Toys:'🧸',Books:'📚',Sports:'⚽',Clothing:'👕',Games:'🎲',Other:'📦'}[x.category]||'📦')+'</div><h3>'+esc(x.title)+'</h3><p>'+esc(x.description)+'</p><div class="price">'+money(x.price_cents)+'</div><small>Parent-supervised seller</small><br><button class="interest" onclick="requestInterest(\''+x.id+'\')">I’m Interested</button></article>').join('')||'<div class="card">No approved listings match your search yet.</div>'
+}
+async function createListing(e){
+ e.preventDefault();
+ if(!currentUser){go('account');msg('loginMessage','Sign in with a parent account before continuing.','danger');return}
+ const title=document.getElementById('lname').value.trim(),description=document.getElementById('ldesc').value.trim(),price=Math.round(Number(document.getElementById('lprice').value)*100),category=document.getElementById('lcat').value;
+ if(!price||price<100){msg('sellMessage','Enter a valid price of at least $1.00.','danger');return}
+ const {error}=await sb.from('listings').insert({seller_child_id:currentUser.id,title,description,category,price_cents:price,status:'pending_parent'});
+ if(error){msg('sellMessage','The listing could not be submitted yet: '+error.message,'danger');return}
+ e.target.reset();msg('sellMessage','Listing submitted to Supabase. It is private until the parent-approval workflow publishes it.');await loadListings();renderAll()
+}
+async function requestInterest(listingId){
+ if(!currentUser){go('account');msg('loginMessage','Sign in before sending an interest request.','danger');return}
+ const {error}=await sb.from('interest_requests').insert({listing_id:listingId,child_buyer_id:currentUser.id,status:'pending_parent'});
+ if(error){alert('Interest request could not be submitted: '+error.message);return}
+ alert('Interest sent. Parent approval is required before checkout.')
+}
+async function saveParent(e){
+ e.preventDefault();if(!currentUser){msg('profileMessage','Please sign in first.','danger');return}
+ const name=document.getElementById('pname').value.trim(),email=document.getElementById('pemail').value.trim();
+ const {data,error}=await sb.from('profiles').update({display_name:name,email}).eq('id',currentUser.id).select().single();
+ if(error){msg('profileMessage',error.message,'danger');return}currentProfile=data;msg('profileMessage','Parent profile saved in Supabase.');renderAll()
+}
+async function callFunction(name,body){
+ const {data:{session}}=await sb.auth.getSession();if(!session)throw new Error('You must be signed in.');
+ const res=await fetch(FUNCTIONS_BASE+'/'+name,{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+session.access_token,'apikey':SUPABASE_PUBLISHABLE_KEY},body:JSON.stringify(body||{})});
+ const json=await res.json().catch(()=>({}));if(!res.ok)throw new Error(json.error||json.message||('Request failed ('+res.status+')'));return json
+}
+async function checkout(orderId){
+ try{const out=await callFunction('create-checkout',{order_id:orderId});if(out.url)window.location.href=out.url;else alert('Checkout was created, but no redirect URL was returned.')}catch(e){alert(e.message)}
+}
+async function startSellerOnboarding(){
+ try{const out=await callFunction('connect-onboarding',{});if(out.url)window.location.href=out.url;else alert('Seller onboarding did not return a URL.')}catch(e){alert(e.message)}
+}
+async function startPremium(){
+ try{const out=await callFunction('premium-checkout',{});if(out.url)window.location.href=out.url;else alert('Premium checkout did not return a URL.')}catch(e){alert(e.message)}
+}
+async function reportSafety(){
+ if(!currentUser){go('account');return}
+ const reason=prompt('Describe the safety concern or prohibited item:');if(!reason)return;
+ const {error}=await sb.from('safety_reports').insert({reporter_id:currentUser.id,reason});
+ alert(error?'Safety report could not be submitted: '+error.message:'Safety report submitted for review.')
+}
+async function renderOrders(){
+ const e=document.getElementById('orders');if(!currentUser){e.innerHTML='<p>Sign in to view orders.</p>';return}
+ const {data}=await sb.from('orders').select('id,status,amount_cents,marketplace_fee_cents,seller_payout_cents,created_at').or('buyer_parent_id.eq.'+currentUser.id+',seller_child_id.eq.'+currentUser.id).order('created_at',{ascending:false});
+ e.innerHTML='<h3>Orders & payments</h3>'+((data||[]).map(o=>'<div class="card"><b>Order</b><p>Status: '+esc(o.status)+' · Total: '+money(o.amount_cents)+'</p><p>Marketplace fee: '+money(o.marketplace_fee_cents)+' · Seller payout: '+money(o.seller_payout_cents)+'</p></div>').join('')||'<p>No orders yet.</p>')
+}
+async function renderInterests(){
+ const e=document.getElementById('interests');if(!currentUser){e.innerHTML='<p>Sign in to view interest requests.</p>';return}
+ const {data}=await sb.from('interest_requests').select('id,status,created_at,listing_id').eq('child_buyer_id',currentUser.id).order('created_at',{ascending:false});
+ e.innerHTML='<h3>Interest Requests</h3>'+((data||[]).map(x=>'<div class="card"><b>Interest request</b><p>Status: '+esc(x.status)+'</p><small>'+new Date(x.created_at).toLocaleString()+'</small></div>').join('')||'<p>No interest requests yet.</p>')
+}
+async function renderNotifications(){
+ const e=document.getElementById('notifications');if(!currentUser){e.innerHTML='<p>Sign in to view notifications.</p>';return}
+ const {data}=await sb.from('notifications').select('title,body,created_at,read_at').eq('profile_id',currentUser.id).order('created_at',{ascending:false}).limit(20);
+ e.innerHTML='<h3>Parent Notifications</h3>'+((data||[]).map(n=>'<div class="card"><b>'+esc(n.title)+'</b><p>'+esc(n.body)+'</p><small>'+new Date(n.created_at).toLocaleString()+'</small></div>').join('')||'<p>No notifications yet.</p>')
+}
+async function renderSafety(){
+ const e=document.getElementById('safety');e.innerHTML='<h3>Safety Reports</h3><p>Report unsafe listings, prohibited items or inappropriate contact.</p><button class="primary" onclick="reportSafety()">Create Safety Report</button>'
+}
+function renderAll(){
+ renderMarket();
+ const status=document.getElementById('accountStatus'),box=document.getElementById('accountBox'),btn=document.getElementById('authBtn'),out=document.getElementById('signOutBtn');
+ if(currentUser){status.textContent='Signed in: '+(currentProfile?.display_name||currentUser.email);box.textContent=(currentProfile?.display_name||'Parent')+' · '+currentUser.email;btn.textContent='Parent Hub';btn.onclick=()=>go('hub');out.style.display='inline-block'}else{status.textContent=configured()?'Not signed in':'Supabase key needed';box.textContent='Not signed in.';btn.textContent='Account';btn.onclick=()=>go('account');out.style.display='none'}
+ document.getElementById('approvals').innerHTML='<h3>Listing Approvals</h3><p class="muted">The database keeps pending listings private. Parent approval changes are intentionally server-authoritative; the current public client does not bypass RLS.</p><div class="notice">Approval actions will appear here once the dedicated parent-approval Edge Function/RLS workflow is deployed.</div>';
+ document.getElementById('premium').innerHTML='<h3>Premium Seller</h3><p>$4.99/month · 0% marketplace fee while active.</p><p>Current status: <b>'+ (premium?'Active':'Not active')+'</b></p>'+(premium?'':'<button class="primary" onclick="startPremium()">Start Premium Checkout</button>');
+ document.getElementById('backend').innerHTML='<h3>Backend & Stripe</h3><p><span class="status">'+(configured()?'Supabase configured':'Supabase key required')+'</span> · Project: '+esc(SUPABASE_URL)+'</p><div class="notice"><b>Security:</b> this file contains only the browser-safe Supabase publishable/anon key. Never put a Supabase service-role key, Stripe secret key or Stripe webhook secret here.</div><h4>Seller payments</h4><p>Stripe Connect onboarding is handled by the deployed secure Edge Function.</p><button class="primary" onclick="startSellerOnboarding()">Start Stripe Connect Onboarding</button><h4>Payment architecture</h4><p>Parent approval → secure backend → Stripe Checkout → webhook verification → order paid → Connect payout. Standard fee: 10%; Premium fee: 0%.</p>';
+ renderOrders();renderInterests();renderNotifications();renderSafety()
+}
+const docs={
+ privacy:'<h2>Privacy Policy</h2><p>Sidekicks is designed around parent supervision. Children must not enter home addresses, school names, precise location, phone numbers or financial information into public marketplace content. Production launch also requires finalized retention, processor, cross-border, security and privacy-request procedures.</p>',
+ terms:'<h2>Terms of Service</h2><p>Children participate under a linked parent/guardian account. Parents approve listings and purchases, pay, resolve disputes and arrange pickup/delivery. Prohibited goods, refunds, non-delivery, disputes and the platform’s legal role must be finalized before launch.</p>',
+ safety:'<h2>Safety Rules</h2><ul><li>No child-to-adult direct meetups.</li><li>No public child addresses, phone numbers or precise locations.</li><li>Parent approval is required for listings and purchases.</li><li>Parents handle payment, payout and fulfillment.</li><li>Unsafe or prohibited goods may be removed.</li></ul>',
+ fees:'<h2>Fees & Refunds</h2><p>Standard seller fee is 10% of sale price. Premium is $4.99/month and waives the marketplace fee while active. Production payment, refund, dispute and payout rules must be enforced server-side.</p>'
+};
+function openDoc(k){document.getElementById('content').innerHTML=docs[k]||'';document.getElementById('modal').classList.add('on')}
+function hide(){document.getElementById('modal').classList.remove('on')}
+sb.auth.onAuthStateChange(()=>setTimeout(refresh,0));
+refresh();
+</script>
+</body>
+</html>
